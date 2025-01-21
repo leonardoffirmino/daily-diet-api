@@ -1,12 +1,15 @@
-from flask import Flask,jsonify, request
-from flask_login import LoginManager
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "your_secret_key"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 
+db = SQLAlchemy(app)
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
-
-@app.route('/meals', methods=['POST'])
+@app.route("/meal",methods=["GET"])
 def create_meal():
+  return "Hello Porra"
+
+if __name__ == '__main__':
+  app.run(debug=True)
