@@ -8,5 +8,5 @@ class Meal(db.Model,UserMixin):
   id = db.Column(db.Integer, primary_key=True)
   meal = db.Column(db.String, nullable=False)
   description = db.Column(db.String,nullable=False)
-  date = db.Column(db.Datetime,default=datetime.datetime.utcnow)
+  date = db.Column(db.DateTime,default=datetime.timezone.utc)
   is_on_diet = db.Column(db.Boolean,nullable=False)
