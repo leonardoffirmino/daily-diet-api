@@ -19,3 +19,13 @@ class Meal(db.Model,UserMixin):
   is_on_diet = db.Column(db.Boolean,nullable=False,default=True)
 
   user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+  def to_dict(self):
+      return {
+            "id": self.id,
+            "meal": self.meal,
+            "description": self.description,
+            "date": self.date.isoformat(),  # Converte datetime para string
+            "is_on_diet": self.is_on_diet,
+            "user_id": self.user_id
+        }

@@ -80,13 +80,15 @@ def create_meal():
 def get_meal(id_user):
   user_id = User.query.get(id_user)
 
-  if user_id:
-    meals = Meal.query.filter_by(user_id=user_id).all()
+  if not user_id:
+    return jsonify({'error':"User not found!"}),404
+  
+  meals = Meal.query.filter_by(user_id=id_user).all()
     
-    return jsonify({"Username return --> ":user_id.username},meals)
-  
-  return jsonify({'error':"User not found!"}),404
-  
+  meals_list = [meal.to_dict() for meal in meals]
+
+  return jsonify({"Meals": meals_list})
+
 
   
 
