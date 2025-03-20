@@ -76,7 +76,7 @@ def create_meal():
   
   return jsonify({'error': "Data invalid"})
 
-@app.route("/get_meal/<int:id_user>",methods=["GET"])
+@app.route("/meal/<int:id_user>",methods=["GET"])
 def get_meal(id_user):
   user_id = User.query.get(id_user)
 
@@ -89,7 +89,13 @@ def get_meal(id_user):
 
   return jsonify({"Meals": meals_list})
 
+@app.route("/meal/<int:id>", methods=["GET"])
+def list_one_meal(id):
+  meal = Meal.query.get(id)
 
+  if not meal:
+    return jsonify({"Meal not located!"})
+  return jsonify({"Meal - Return ->",meal})
   
 
 if __name__ == '__main__':
