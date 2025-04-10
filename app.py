@@ -76,14 +76,15 @@ def create_meal():
   
   return jsonify({'error': "Data invalid"})
 
-@app.route("/meal/<int:id_user>",methods=["GET"])
-def get_meal(id_user):
-  user_id = User.query.get(id_user)
+#Get all items of user in database
+@app.route("/meal",methods=["GET"])
+def get_meal():
+  user_id = request.args.get("id_user", type=int)
 
   if not user_id:
     return jsonify({'error':"User not found!"}),404
-  
-  meals = Meal.query.filter_by(user_id=id_user).all()
+   
+  meals = Meal.query.filter_by(user_id=user_id).all()
     
   meals_list = [meal.to_dict() for meal in meals]
 
@@ -95,7 +96,7 @@ def list_one_meal(id):
 
   if not meal:
     return jsonify({"Meal not located!"})
-  return jsonify({"Meal - Return ->",meal})
+  return jsonify({"Meal return": meal.to_dict()})
   
 
 if __name__ == '__main__':
