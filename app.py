@@ -97,7 +97,41 @@ def list_one_meal(id):
   if not meal:
     return jsonify({"Meal not located!"})
   return jsonify({"Meal return": meal.to_dict()})
+
+
+@app.route("/meal/<int:id>",methods=["PUT"])
+def update_meal(id):
+  data = request.json
+  meal = Meal.query.get(id)
+
+  if not meal:
+    return jsonify({'error':'Meal not located!'}),404
   
+  meal.meal = data.get("meal", meal.meal)
+  meal.description = data.get("description", meal.description)
+  meal.date = data.get("date", meal.date)
+  meal.is_on_diet = data.get("is_on_diet", meal.is_on_diet)
+
+  db.session.commit()
+
+  return jsonify({"message": "Meal updated successfully", "meal": meal.to_dict()})
+
+@app.route("/meal/<int:id>",methods=["DELETE"])
+def delete_meal(id):
+    data = request.json
+    meal_id = data.get(id)
+
+    if not meal_id:
+        return jsonify({"error": "Meal ID is required"}), 400
+
+    meal = Meal.query.get(meal_id)
+    if not meal:
+        return jsonify({"error": "Meal not found!"}), 404
+
+    db.session.delete(meal)
+    db.session.commit()
+
+    return jsonify({"message": "Meal deleted successfully"})
 
 if __name__ == '__main__':
   app.run(debug=True)
