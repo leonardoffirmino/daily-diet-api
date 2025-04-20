@@ -1,3 +1,4 @@
+from datetime import datetime
 from model.user import User
 from model.meals import Meal
 from flask import Flask, jsonify, request
@@ -107,10 +108,18 @@ def update_meal(id):
   if not meal:
     return jsonify({'error':'Meal not located!'}),404
   
+  try:
+    date_str = data.get("date")
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S") if date_str else None
+  except ValueError:
+    return jsonify({"error": "Invalid date format. Use YYYY-MM-DD HH:MM:SS"}), 400
+
   meal.meal = data.get("meal", meal.meal)
   meal.description = data.get("description", meal.description)
-  meal.date = data.get("date", meal.date)
-  meal.is_on_diet = data.get("is_on_diet", meal.is_on_diet)
+  
+  if date_obj:
+    meal.date = date_obj
+    meal.is_on_diet = data.get("is_on_diet", meal.is_on_diet)
 
   db.session.commit()
 
@@ -118,20 +127,15 @@ def update_meal(id):
 
 @app.route("/meal/<int:id>",methods=["DELETE"])
 def delete_meal(id):
-    data = request.json
-    meal_id = data.get(id)
+    meal = db.session.get(Meal, id)  # Usando SQLAlchemy 2.0+
 
-    if not meal_id:
-        return jsonify({"error": "Meal ID is required"}), 400
-
-    meal = Meal.query.get(meal_id)
     if not meal:
         return jsonify({"error": "Meal not found!"}), 404
 
     db.session.delete(meal)
     db.session.commit()
 
-    return jsonify({"message": "Meal deleted successfully"})
+    return jsonify({"message": "Meal deleted successfully"}), 200 
 
 if __name__ == '__main__':
   app.run(debug=True)
